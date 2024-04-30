@@ -51,6 +51,7 @@ parts:
 #   version-format:
 #     lower-than: '47'
 #     no-9x-revisions: true
+#     format: "%M.%m"
     plugin: meson
     parse-info: [usr/share/metainfo/org.gnome.Calculator.appdata.xml]
     meson-parameters:
