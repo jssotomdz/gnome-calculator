@@ -65,7 +65,6 @@ parts:
       - libmpc-dev
       - libmpfr-dev
       - libgvc6
-    build-snaps: [ gnome-46-2404/latest/edge, gnome-46-2404-sdk/latest/edge ] # Only needed until these are released to stable
     override-pull: |
       craftctl default
       craftctl set version=$(git describe --tags --abbrev=10)
