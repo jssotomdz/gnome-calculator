@@ -1,0 +1,46 @@
+name: yarf-test
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: 
+      - stable
+  push:
+    branches:
+      - stable
+
+jobs:
+  yarf-test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: snapcore/action-build@v1
+      id: snapcraft
+    - name: yarf test
+      run: |
+        sudo snap install --dangerous ${{ steps.snapcraft.outputs.snap }}
+        sudo snap install mir-test-tools
+        sudo snap connect gnome-calculator:wayland
+        sudo snap install yarf --beta
+        sudo apt-get --yes --no-install-recommends install inotify-tools
+        export WAYLAND_DISPLAY=wayland-99
+        mir-test-tools.demo-server \
+          --add-wayland-extensions zwlr_screencopy_manager_v1:zwlr_virtual_pointer_manager_v1 \
+          --platform-display-libs mir:virtual \
+          --virtual-output 1280x1024 &
+
+        # Wait for the compositor to start
+        inotifywait --event create --include "^$XDG_RUNTIME_DIR/wayland-99\$" $XDG_RUNTIME_DIR
+        
+        # Avoid GNOME apps waiting for portals
+        dbus-run-session -- snap run gnome-calculator &
+        
+        mkdir ./output
+        yarf --platform=Mir ./yarf-test --outdir=./output
+
+    - if: failure()
+      name: Collect test results
+      uses: actions/upload-artifact@v4
+      with:
+        name: yarf-output
+        path: ./output/*
+        retention-days: 1

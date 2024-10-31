@@ -6,7 +6,7 @@ Task Tags       robot:stop-on-failure
 
 *** Test Cases ***
 Assert Calculator Started
-    Match                   ${CURDIR}/01_calculator.png
+    Match                   ${CURDIR}/01_calculator.png    120
 
 Answer the ultimate question of life, the universe and everything
     Click LEFT Button on ${CURDIR}/calculator/4.png
