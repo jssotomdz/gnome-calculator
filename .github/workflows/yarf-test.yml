@@ -44,3 +44,9 @@ jobs:
         name: yarf-output
         path: ./output/*
         retention-days: 1
+        
+    - if: ${{ failure() && runner.debug }}
+      name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+      with:
+        limit-access-to-actor: true
